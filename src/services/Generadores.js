@@ -82,8 +82,9 @@ class Uniforme {
         return parseFloat((1/(this.b-this.a)).toFixed(4));
     }
 
-    getLimites = ()=>{
-        return [this.a,this.b]
+    getLimites = (muestra)=>{
+        //return [this.a,this.b]
+        return [Math.min(...muestra), Math.max(...muestra)]
     }
 
     getGradosLibertad = ()=>{
@@ -113,8 +114,9 @@ class Exponencial {
         return parseFloat((this.lambda*Math.pow(Math.E,(-1*this.lambda*x))).toFixed(4));
     }
 
-    getLimites = ()=>{
-        return [0,1];
+    getLimites = (muestra)=>{
+        //return [0,1];
+        return [Math.min(...muestra), Math.max(...muestra)]
     }
 
     getGradosLibertad = ()=>{

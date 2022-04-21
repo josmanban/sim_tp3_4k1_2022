@@ -198,7 +198,7 @@ const TP3 = () => {
                         type='number' 
                         value={a}
                         onChange={(e)=>{
-                            setA(Number.parseInt(e.target.value));
+                            setA(Number.parseFloat(e.target.value));
                         }}
                         />
                 </div>
@@ -208,7 +208,7 @@ const TP3 = () => {
                         type='number' 
                         value={b}
                         onChange={(e)=>{
-                            setB(Number.parseInt(e.target.value));
+                            setB(Number.parseFloat(e.target.value));
                         }}
                         />
                 </div>
@@ -222,7 +222,7 @@ const TP3 = () => {
                         type='number' 
                         value={media}
                         onChange={(e)=>{
-                            setMedia(Number.parseInt(e.target.value));
+                            setMedia(Number.parseFloat(e.target.value));
                         }}
                         />
                 </div>
@@ -239,7 +239,21 @@ const TP3 = () => {
                 </div>
             </>
         }
-        { (generatorType === 2 || generatorType === 4) &&
+        { (generatorType === 2) &&
+            <>
+                <div>
+                    <label>λ:</label>
+                    <input 
+                        type='number' 
+                        value={lambda}
+                        onChange={(e)=>{
+                            setLambda(Number.parseFloat(e.target.value));
+                        }}
+                        />
+                </div>                
+            </>
+        }
+        { (generatorType === 4) &&
             <>
                 <div>
                     <label>λ:</label>
