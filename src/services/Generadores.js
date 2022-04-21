@@ -127,15 +127,7 @@ class Normal {
         this.media = media;
         this.desviacion = desviacion
         this.k = k;
-    }
-
-    calcularRandom = ()=>{
-        const r1 = Math.random();
-        const r2 = Math.random();
-        const n1 = parseFloat((Math.sqrt(-2*Math.log(r1))*Math.cos(2*Math.PI*r2)*this.desviacion+this.media).toFixed(4));
-        const n2 = parseFloat((Math.sqrt(-2*Math.log(r1))*Math.sin(2*Math.PI*r2)*this.desviacion+this.media).toFixed(4));
-        return [n1,n2];
-    }
+    }    
 
     getMedia = () => {
         return this.media;
@@ -146,20 +138,11 @@ class Normal {
     }
 
     getDensidad = (x)=> {
-        return parseFloat((1/(this.desviacion*Math.sqrt(2*Math.PI)))*Math.pow(Math.E,(-0.5*Math.pow((x-this.media)/this.desviacion,2)))).toFixed(4);
+        return parseFloat((1/(this.desviacion*Math.sqrt(2*Math.PI)))*Math.pow(Math.E,(-0.5*Math.pow((x-this.media)/this.desviacion,2))).toFixed(4));
     }
 
     getLimites = (muestra)=>{
-       let min = 0;
-       let max = 0;
-       muestra.forEach(r=>{
-           if(r>=max){
-               max=r;
-           }else if(r<=min){
-            min=r;
-           }
-       });
-       return [min,max];
+        return [Math.min(...muestra), Math.max(...muestra)]
     }
 
     getGradosLibertad = ()=>{
@@ -168,6 +151,38 @@ class Normal {
 
 }
 
+class NormalBoxMuller extends Normal {    
+
+    calcularRandom = ()=>{
+        if(this.convolucion){
+            
+        }
+        const r1 = Math.random();
+        const r2 = Math.random();
+        const n1 = parseFloat((Math.sqrt(-2*Math.log(r1))*Math.cos(2*Math.PI*r2)*this.desviacion+this.media).toFixed(4));
+        const n2 = parseFloat((Math.sqrt(-2*Math.log(r1))*Math.sin(2*Math.PI*r2)*this.desviacion+this.media).toFixed(4));
+        return [n1,n2];
+    }
+}
+class NormalConvolucion extends Normal {
+
+    generarDatosMuestraUniforme = ()=>{
+        let muestraUniforme = [];
+        let sumatoriaMuestraUniforme = 0;
+        for (let index = 0; index < 12; index++) {
+            const numAleatorio = Math.random()
+            muestraUniforme.push(numAleatorio);
+            sumatoriaMuestraUniforme+= numAleatorio         
+        }
+        return [muestraUniforme, sumatoriaMuestraUniforme];
+    }
+
+    calcularRandom = ()=>{
+        const [muestra, sumatoria] = this.generarDatosMuestraUniforme();
+        return parseFloat(((sumatoria-6)*this.desviacion+this.media).toFixed(4));
+    }
+
+}
 class Poisson {
     constructor(lambda,k){
         this.lambda = lambda;
@@ -221,16 +236,7 @@ class Poisson {
     }
 
     getLimites = (muestra)=>{
-        let min = 0;
-        let max = 0;
-        muestra.forEach(r=>{
-            if(r>=max){
-                max=r;
-            }else if(r<=min){
-             min=r;
-            }
-        });
-        return [min,max];
+       return [Math.min(...muestra), Math.max(...muestra)]
     }
 
     getGradosLibertad = ()=>{
@@ -243,6 +249,7 @@ export {
     CongruencialMultiplicativo,
     Uniforme,
     Exponencial,
-    Normal,
+    NormalBoxMuller,
+    NormalConvolucion,
     Poisson,
 }

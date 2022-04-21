@@ -2,11 +2,13 @@
   "name": "sim_tp3_4k2_2021",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://josmanban.github.io/sim_tp3_4k1_2022/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "chart.js": "^3.2.0",
+    "gh-pages": "^3.2.3",
     "react": "^17.0.2",
     "react-chartjs-2": "^3.0.3",
     "react-dom": "^17.0.2",
@@ -17,7 +19,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [

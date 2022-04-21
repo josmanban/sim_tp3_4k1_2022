@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import { PruebaChiCuadrado } from '../services/PruebaChiCuadrado';
-import { Uniforme, Exponencial, Normal, Poisson } from '../services/Generadores';
+import { Uniforme, Exponencial, NormalBoxMuller, NormalConvolucion,Poisson } from '../services/Generadores';
 import { Bar } from 'react-chartjs-2';
 
 const TP3 = () => {
@@ -62,7 +62,7 @@ const TP3 = () => {
                 break;
             case 3:
                 if(media && desviacion) {
-                setGeneradorInstance(new Normal(media,desviacion,k));
+                setGeneradorInstance(new NormalBoxMuller(media,desviacion,k));
                 } else {
                     setGeneradorInstance(null);
                 }
@@ -70,6 +70,14 @@ const TP3 = () => {
             case 4:
                 if(lambda) {
                     setGeneradorInstance(new Poisson(lambda,k));
+                } else {
+                    setGeneradorInstance(null);
+                }
+                break;
+            case 5:
+                if(media && desviacion) {
+                    setGeneradorInstance(new NormalConvolucion(
+                        media,desviacion,k));
                 } else {
                     setGeneradorInstance(null);
                 }
@@ -177,7 +185,8 @@ const TP3 = () => {
             > 
             <option value='1'>UNIFORME</option>
             <option value='2'>EXPONENCIAL</option>
-            <option value='3'>NORMAL</option>
+            <option value='3'>NORMAL (Box-Muller)</option>
+            <option value='5'>NORMAL (Convolución)</option>
             <option value='4'>POISSON</option>
         </select>
         
@@ -205,7 +214,7 @@ const TP3 = () => {
                 </div>
             </>
         }
-        { generatorType === 3 &&
+        { (generatorType === 3 || generatorType === 5) &&
             <>
                 <div>
                     <label>µ:</label>
@@ -223,7 +232,8 @@ const TP3 = () => {
                         type='number' 
                         value={desviacion}
                         onChange={(e)=>{
-                            setDesviacion(Number.parseInt(e.target.value));
+                            const aux = Number.parseFloat(e.target.value)
+                            setDesviacion(aux);
                         }}
                         />
                 </div>

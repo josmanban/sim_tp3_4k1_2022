@@ -55,7 +55,8 @@ class PruebaChiCuadrado{
 
     calcularFrecuenciaEsperada = (x,intervaloLength)=>{
         if (this.generador) {
-            return parseFloat((this.generador.getDensidad(x)*intervaloLength*this.muestra.length).toFixed(4));
+            const densidad = this.generador.getDensidad(x);
+            return parseFloat((densidad*intervaloLength*this.muestra.length).toFixed(4));
         }
         return parseFloat((this.muestra.length/this.numIntervalos).toFixed(4));
     }
