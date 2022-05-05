@@ -96,9 +96,14 @@ const TP3 = () => {
         chi.calcularChiCuadrado();
         setChiInstance(chi);
 
-        const ks = new PruebaKS(k,muestra, generadorInstance);
-        ks.calcularsKS();
-        setPruebaKSInstance(ks);
+        if(muestra.length<=30 && !(generadorInstance instanceof Poisson)){
+            const ks = new PruebaKS(k,muestra, generadorInstance);
+            ks.calcularsKS();
+            setPruebaKSInstance(ks);
+        }else{
+            setPruebaKSInstance(null);
+        }
+        
     },[muestra,k]);
 
     useEffect(()=>{        
@@ -108,12 +113,16 @@ const TP3 = () => {
     useEffect(()=>{
         if(chiInstance){
             setRows(chiInstance.data);
+        }else{
+            setRows([]);
         }
     },[chiInstance]);
 
     useEffect(()=>{
         if(pruebaKSInstance){
             setKSrows(pruebaKSInstance.data)
+        }else{
+            setKSrows([]);
         }
     },[pruebaKSInstance]);
 
@@ -382,6 +391,7 @@ const TP3 = () => {
                 </tr>))}
             </tbody>
         </table>
+        <br></br>
         <h2>Prueba Kolmogorov-Smirnov</h2>
         <table>
             <thead>
@@ -415,6 +425,8 @@ const TP3 = () => {
                 </tr>))}
             </tbody>
         </table>
+        <br></br>
+        <h2>Histograma</h2>
         <Bar data={chartData}/>
         </div>
     </div>
