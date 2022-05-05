@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import { PruebaChiCuadrado } from '../services/PruebaChiCuadrado';
+import { PruebaKS } from '../services/PruebaKS';
 import { Uniforme, Exponencial, NormalBoxMuller, NormalConvolucion,Poisson } from '../services/Generadores';
 import { Bar } from 'react-chartjs-2';
 
@@ -9,7 +10,9 @@ const TP3 = () => {
     const [muestra,setMuestra] = useState([]);
 
     const [chiInstance, setChiInstance] = useState();
+    const [pruebaKSInstance, setPruebaKSInstance] = useState()
     const [rows,setRows] = useState([]);
+    const [ksRows, setKSrows] = useState([]);
     const [chartData, setChartData] = useState({});
 
 
@@ -45,6 +48,7 @@ const TP3 = () => {
     useEffect(()=>{
         setN(0);
         setChiInstance(null);
+        setPruebaKSInstance(null);
         switch(generatorType) {
             case 1:
                 if(a && b){
@@ -91,6 +95,10 @@ const TP3 = () => {
         const chi = new PruebaChiCuadrado(k,muestra,generadorInstance);
         chi.calcularChiCuadrado();
         setChiInstance(chi);
+
+        const ks = new PruebaKS(k,muestra, generadorInstance);
+        ks.calcularsKS();
+        setPruebaKSInstance(ks);
     },[muestra,k]);
 
     useEffect(()=>{        
@@ -102,6 +110,12 @@ const TP3 = () => {
             setRows(chiInstance.data);
         }
     },[chiInstance]);
+
+    useEffect(()=>{
+        if(pruebaKSInstance){
+            setKSrows(pruebaKSInstance.data)
+        }
+    },[pruebaKSInstance]);
 
     useEffect(()=>{
         const auxChartData = {
@@ -154,7 +168,9 @@ const TP3 = () => {
                 type='number' 
                 value={k}
                 onChange={(e)=>{
-                    setK(Number.parseInt(e.target.value));
+                    
+                        setK(Number.parseInt(e.target.value));
+                    
                 }}
                 />
         </div>
@@ -198,7 +214,12 @@ const TP3 = () => {
                         type='number' 
                         value={a}
                         onChange={(e)=>{
-                            setA(Number.parseFloat(e.target.value));
+                            const aux= e.target.value;
+                            if(isNaN(aux)){
+                                setA(aux);
+                            }else{
+                            setA(Number.parseFloat(aux));
+                            }
                         }}
                         />
                 </div>
@@ -208,7 +229,12 @@ const TP3 = () => {
                         type='number' 
                         value={b}
                         onChange={(e)=>{
-                            setB(Number.parseFloat(e.target.value));
+                            const aux= e.target.value;
+                            if(isNaN(aux)){
+                                setB(aux);
+                            }else{
+                            setB(Number.parseFloat(aux));
+                            }
                         }}
                         />
                 </div>
@@ -222,7 +248,12 @@ const TP3 = () => {
                         type='number' 
                         value={media}
                         onChange={(e)=>{
-                            setMedia(Number.parseFloat(e.target.value));
+                            const aux= e.target.value;
+                            if(isNaN(aux)){
+                                setMedia(aux);
+                            }else{
+                            setMedia(Number.parseFloat(aux));
+                            }
                         }}
                         />
                 </div>
@@ -232,8 +263,12 @@ const TP3 = () => {
                         type='number' 
                         value={desviacion}
                         onChange={(e)=>{
-                            const aux = Number.parseFloat(e.target.value)
-                            setDesviacion(aux);
+                            const aux= e.target.value;
+                            if(isNaN(aux)){
+                                setDesviacion(aux);
+                            }else{
+                            setDesviacion(Number.parseFloat(aux));
+                            }
                         }}
                         />
                 </div>
@@ -247,7 +282,12 @@ const TP3 = () => {
                         type='number' 
                         value={lambda}
                         onChange={(e)=>{
-                            setLambda(Number.parseFloat(e.target.value));
+                            const aux= e.target.value;
+                            if(isNaN(aux)){
+                                setLambda(aux);
+                            }else{
+                            setLambda(Number.parseFloat(aux));
+                            }
                         }}
                         />
                 </div>                
@@ -261,7 +301,12 @@ const TP3 = () => {
                         type='number' 
                         value={lambda}
                         onChange={(e)=>{
-                            setLambda(Number.parseInt(e.target.value));
+                            const aux= e.target.value;
+                            if(isNaN(aux)){
+                                setLambda(aux);
+                            }else{
+                            setLambda(Number.parseInt(aux));
+                            }
                         }}
                         />
                 </div>                
@@ -308,6 +353,7 @@ const TP3 = () => {
             display:'inline-block',
             marginLeft:'1em',
         }}>
+        <h2>Prueba Ji-Cuadrado</h2>
         <table>
             <thead>
                 <th>i</th>
@@ -333,6 +379,39 @@ const TP3 = () => {
                     <td>{row.col2}</td>
                     <td>{row.col3}</td>
                     <td>{row.c}</td>
+                </tr>))}
+            </tbody>
+        </table>
+        <h2>Prueba Kolmogorov-Smirnov</h2>
+        <table>
+            <thead>
+                <th>i</th>
+                <th>Min</th>
+                <th>Max</th>
+                <th>MC</th>
+                <th>FO</th>
+                <th>FE</th>
+                <th>P(FO)</th>
+                <th>P(FE)</th>
+                <th>P(FO)ac</th>
+                <th>P(Fe)ac</th>
+                <th>|P(FO)ac-P(FE)ac|</th>
+                <th>Max(|P(FO)ac-P(FE)ac|)</th>
+            </thead>
+            <tbody>
+                {ksRows.map((row,i)=>(<tr>
+                    <td>{i+1}</td>
+                    <td>{row.min}</td>
+                    <td>{row.max}</td>
+                    <td>{row.mc}</td>
+                    <td>{row.fo}</td>
+                    <td>{row.fe}</td>
+                    <td>{row.pfo}</td>
+                    <td>{row.pfe}</td>
+                    <td>{row.pfo_ac}</td>
+                    <td>{row.pfe_ac}</td>
+                    <td>{row.resta_probabilidades_acumuladas}</td>
+                    <td>{row.maximo_resta}</td>
                 </tr>))}
             </tbody>
         </table>

@@ -1,4 +1,4 @@
-class PruebaChiCuadrado{
+class PruebaKS{
     constructor(numIntervalos, muestra, generador ,confianza=0.95){
         this.numIntervalos=numIntervalos;
         this.muestra = muestra;
@@ -7,7 +7,7 @@ class PruebaChiCuadrado{
         this.data = [];
     }
 
-    calcularChiCuadrado = () => {
+    calcularsKS = () => {
         if (!this.generador && this.muestra.length>0){
             const paso = 1/this.numIntervalos;
             for(let i=0;i<this.numIntervalos;i++){
@@ -38,7 +38,7 @@ class PruebaChiCuadrado{
                     max,
                     mc,
                     ...this.calcularColumnas(max,min,mc,i)
-                })
+                });
             }
         } else {
             this.data = [];
@@ -66,11 +66,13 @@ class PruebaChiCuadrado{
     calcularColumnas = (max,min,mc,i) => {        
         const fo = this.contarFrecuenciaMuestra(min,max);
         const fe = Math.abs(this.calcularFrecuenciaEsperada(mc,max-min));
-        const col1 = parseFloat((fo-fe).toFixed(4));
-        const col2 = parseFloat((Math.pow(col1,2)).toFixed(4));
-        const col3 = fe!=0?parseFloat((col2/fe).toFixed(4)):0;
-        const c = i == 0 ? col3 : parseFloat((this.data[i-1].c+col3).toFixed(4));
-        return {fo,fe,col1,col2,col3,c}
+        const pfo = parseFloat((fo/this.muestra.length).toFixed(4));
+        const pfe = parseFloat((fe/this.muestra.length).toFixed(4));
+        const pfo_ac= parseFloat((pfo+ (i>0 ? this.data[i-1].pfo_ac : 0)).toFixed(4));
+        const pfe_ac = parseFloat((pfe+ (i>0 ? this.data[i-1].pfe_ac : 0)).toFixed(4));
+        const resta_probabilidades_acumuladas = parseFloat((Math.abs(pfo_ac-pfe_ac)).toFixed(4));
+        const maximo_resta = i==0 || resta_probabilidades_acumuladas > this.data[i-1].maximo_resta ? resta_probabilidades_acumuladas:this.data[i-1].maximo_resta;
+        return {fo,fe,pfo,pfe,pfo_ac,pfe_ac,resta_probabilidades_acumuladas,maximo_resta}
     }
 
     getGradosDeLibertad = ()=>{
@@ -83,4 +85,4 @@ class PruebaChiCuadrado{
 
 }
 
-export {PruebaChiCuadrado}
+export {PruebaKS}
